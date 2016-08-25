@@ -24,16 +24,21 @@ $CurrentIfName = "";
 $n = -1;
 $iftest = $false;
 
-netsh wlan show network mode=bssid | % {
-	if ( $_ -match "Interface") {
-		$CurrentIfName = [regex]::match($_.Replace("Interface name : ","")
+$output = get-content "output.txt"
+# $output = netsh wlan show network mode=bssid 
+$line = 0
+$ssidcount=0
+while ($line -lt $output.length) {
+	$currentline = $output[$line];
+	if ($currentline -match "Interface") {
+		$CurrentIfName = [regex]::match($currentline.Replace("Interface name : ","")
 			                            ,"\w{1,}").ToString();
 	    if (($CurrentIfName.ToLower() -eq $ifname.ToLower()) -or ($ifname.length -eq 0)) {
 		    $iftest=$true;
 		} else { $iftest=$false }
 	}	 
 	
-	$buf = [regex]::replace($_,"[ ]","");
+	$buf = [regex]::replace($currentline,"[ ]","");
 	if ([regex]::IsMatch($buf,"^SSID\d{1,}(.)*") -and $iftest) {
 	   	$item = "" | Select-Object SSID,NetType,Auth,Encryption,BSSID,Signal,Radiotype,Channel;
 		$n+=1;
@@ -61,6 +66,6 @@ netsh wlan show network mode=bssid | % {
 	if ([regex]::IsMatch($buf,"Channel") -and $iftest) {
 	  	$ActiveNetworks[$n].Channel=$buf.Replace("Channel:","");
 	}
+	$line += 1;
 }
-
 $ActiveNetworks
