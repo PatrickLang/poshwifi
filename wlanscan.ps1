@@ -22,9 +22,9 @@ class NetworkListEntry
     [string]$Auth
     [string]$Encryption
     [string]$BSSID
-    [string]$Signal
+    [float]$Signal
     [string]$Radiotype
-    [string]$Channel
+    [int]$Channel
 
 }
 
