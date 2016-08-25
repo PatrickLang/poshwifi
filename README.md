@@ -43,3 +43,26 @@ Property :
 2. Find a way to manually associate with a specific AP
 3. Write `IsThisNetworkGood` function
 4. Iterate 1/2/3 to go through networks and find something that works
+5. Vendor lookup by MAC
+
+## Interesting Tricks
+
+Why would there be multiple BSSID's with the same channel and signal level? My guess is it's one physical AP
+broadcasting on multiple SSIDs.
+
+```none
+PS C:\Users\Patrick\Source\poshwifi> .\wlanscan.ps1 -testInput .\testInputs\output2.txt | Group-Object Signal, Channel
+
+Count Name                      Group
+----- ----                      -----
+    1 0.53, 11                  {NetworkListEntry}
+    1 0.81, 1                   {NetworkListEntry}
+    3 0.45, 157                 {NetworkListEntry, NetworkListEntry, NetworkListEntry}
+    1 0.99, 153                 {NetworkListEntry}
+    3 0.63, 108                 {NetworkListEntry, NetworkListEntry, NetworkListEntry}
+    1 0.55, 100                 {NetworkListEntry}
+    3 0.36, 64                  {NetworkListEntry, NetworkListEntry, NetworkListEntry}
+    1 0.31, 56                  {NetworkListEntry}
+    1 0.46, 36                  {NetworkListEntry}
+...
+```
