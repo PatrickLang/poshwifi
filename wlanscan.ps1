@@ -10,7 +10,10 @@
 # Usage example: wlanscan WiFi
 #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-
-PARAM ($ifname = "")
+param(
+$ifname = "",
+$testInput = ""
+)
 
 class NetworkListEntry
 {
@@ -52,8 +55,14 @@ $CurrentIfName = "";
 $n = -1;
 $iftest = $false;
 
-$output = get-content "output.txt"
-# $output = netsh wlan show network mode=bssid 
+if ($testInput)
+{
+    $output = get-content $testInput
+}
+else
+{
+    $output = netsh wlan show network mode=bssid
+}
 $line = 0
 $ssidcount=0
 while ($line -lt $output.length) {
