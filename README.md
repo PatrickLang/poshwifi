@@ -1,12 +1,22 @@
+```none
+     ____      ____  _  __        ___  __ _
+    |  _ \ ___/ ___|| |_\ \      / (_)/ _(_)
+    | |_) / _ \___ \| '_ \ \ /\ / /| | |_| |
+    |  __/ (_) |__) | | | \ V  V / | |  _| |
+    |_|   \___/____/|_| |_|\_/\_/  |_|_| |_|
+```
 
-I was troubleshooting wifi between my own laptop and a colleagues', and realized that I should just script it. 
+I was troubleshooting wifi performance on a colleague's laptop, which was quite painful on an expo floor with 80 (yes 80)
+access points flooding the specrum. After spending lots fo time scrolling through `netsh` output, I realized that I really
+should script this process.
+
 The first step is to parse the text output of `netsh wlan show network mode=bssid` to get details of all APs,
-then parse it into objects. Reading through a long list of text isn't efficient, especially when there could 
+then parse it into objects. Reading through a long list of text isn't efficient, especially when there could
 be 50+ APs clogging up the limited wifi spectrum on an expo floor.
 
 I found an existing script from Kris Cieslak on his blog
 [./defaultset](http://defaultset.blogspot.ca/2010/04/powershell-wireless-network-scan-script.html)
-that was close to what I needed, then started hacking it up.
+that was close to what I needed, so I created a git repo then started hacking it up.
 
 ## Usage
 
