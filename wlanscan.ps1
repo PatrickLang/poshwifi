@@ -13,13 +13,13 @@
 PARAM ($ifname = "")
 
 # Windows Vista/2008/7
-if  ((gwmi win32_operatingsystem).Version.Split(".")[0] -lt 6) {
+if  ((gwmi win32_operatingsystem).Version.Split(".")[0] -gt 6) {
 	throw "This script works on Windows Vista or higher."
 }
 if ((gsv "wlansvc").Status -ne "Running" ) {
 	throw "WLAN AutoConfig service must be running."
 }
-$GLOBAL:ActiveNetworks = @();
+$ActiveNetworks = @();
 $CurrentIfName = "";	
 $n = -1;
 $iftest = $false;
@@ -38,43 +38,29 @@ netsh wlan show network mode=bssid | % {
 	   	$item = "" | Select-Object SSID,NetType,Auth,Encryption,BSSID,Signal,Radiotype,Channel;
 		$n+=1;
        	$item.SSID = [regex]::Replace($buf,"^SSID\d{1,}:","");
-		$GLOBAL:ActiveNetworks+=$item;
+		$ActiveNetworks+=$item;
 	}
   	if ([regex]::IsMatch($buf,"Networktype") -and $iftest) {
-	   	$GLOBAL:ActiveNetworks[$n].NetType=$buf.Replace("Networktype:","");
+	   	$ActiveNetworks[$n].NetType=$buf.Replace("Networktype:","");
 	}
 	if ([regex]::IsMatch($buf,"Authentication") -and $iftest) {
-	   	$GLOBAL:ActiveNetworks[$n].Auth=$buf.Replace("Authentication:","");
+	   	$ActiveNetworks[$n].Auth=$buf.Replace("Authentication:","");
 	}
 	if ([regex]::IsMatch($buf,"Encryption") -and $iftest) {
-	   	$GLOBAL:ActiveNetworks[$n].Encryption=$buf.Replace("Encryption:","");
+	   	$ActiveNetworks[$n].Encryption=$buf.Replace("Encryption:","");
 	 	}
-        if ([regex]::IsMatch($buf,"BSSID1") -and $iftest) {
-	   	$GLOBAL:ActiveNetworks[$n].BSSID=$buf.Replace("BSSID1:","");
+        if ([regex]::IsMatch($buf,"BSSID\d") -and $iftest) {
+	   	$ActiveNetworks[$n].BSSID=[regex]::Replace($buf,"BSSID\d{1,}:","");
 	}
 	if ([regex]::IsMatch($buf,"Signal") -and $iftest) {
-	   	$GLOBAL:ActiveNetworks[$n].Signal=$buf.Replace("Signal:","");
+	   	$ActiveNetworks[$n].Signal=[int]::Parse([regex]::Match($buf.Replace("Signal:",""), "\d+")) / 100;
 	}
 	if ([regex]::IsMatch($buf,"Radiotype") -and $iftest) {
-	   	$GLOBAL:ActiveNetworks[$n].Radiotype=$buf.Replace("Radiotype:","");
+	   	$ActiveNetworks[$n].Radiotype=$buf.Replace("Radiotype:","");
 	}
 	if ([regex]::IsMatch($buf,"Channel") -and $iftest) {
-	  	$GLOBAL:ActiveNetworks[$n].Channel=$buf.Replace("Channel:","");
+	  	$ActiveNetworks[$n].Channel=$buf.Replace("Channel:","");
 	}
 }
-if ( ($CurrentIfName.ToLower() -eq $ifname.ToLower()) -or ($ifname.length -eq 0) ) {
-	write-host -ForegroundColor Yellow "`nInterface: "$CurrentIfName;
-	if (($GLOBAL:ActiveNetworks.length -gt 0)) {
-   		$GLOBAL:ActiveNetworks | Sort-Object Signal -Descending | 
-			ft @{Label = "BSSID"; Expression={$_.BSSID };width=18},
-               @{Label = "Channel"; Expression={$_.Channel};width=8},
-			   @{Label = "Signal"; Expression={$_.Signal};width=7},
-			   @{Label = "Encryption"; Expression={$_.Encryption};width=11},
-   			   @{Label = "Authentication"; Expression={$_.Auth};width=15},
-			   SSID
-	} else {
-	   Write-host "`n No active networks found.`n";
-	}
-} else {
-  Write-host -ForegroundColor Red "`n Could not find interface: "$ifname"`n";
-}
+
+$ActiveNetworks
