@@ -15,8 +15,8 @@ then parse it into objects. Reading through a long list of text isn't efficient,
 be 50+ APs clogging up the limited wifi spectrum on an expo floor.
 
 I found an existing script from Kris Cieslak on his blog
-[./defaultset](http://defaultset.blogspot.ca/2010/04/powershell-wireless-network-scan-script.html)
-that was close to what I needed, so I created a git repo then started hacking it up.
+[./defaultset](http://defaultset.blogspot.ca/2010/04/powershell-wireless-network-scan-script.html) that he posted
+to the [PoShCode](http://poshcode.org/1731) script sharing site. It was close to what I needed, so I created a git repo then started hacking it up.
 
 ## Usage
 
